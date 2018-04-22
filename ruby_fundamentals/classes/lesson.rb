@@ -17,7 +17,22 @@ class Animal
     @name = name
     @gender = gender
   end
-
+  
+  # Called if method called by subclass doesn't exists
+  # Prone to bugs because it's part of ruby core
+  def method_missing(method_name, *args, &block)
+      if [:swim, :climb, :address].include? method_name
+        puts "I can't do #{method_name}"
+      else
+         super
+      end
+  end
+  
+  # Corresponding method with method_missing
+  def respond_to_missing?(method_name, *args)
+    super
+  end
+    
   def specie
     # If nemo calls, nemo.specie
     # self is nemo
@@ -25,7 +40,8 @@ class Animal
   end
 
   def greet
-    p "Hello, my name is #{name}. I live in #{address}"
+    puts "Hello, my name is #{name}. I live in #{address}"
+    puts "I am a #{specie}"
   end
 
   private
@@ -48,13 +64,14 @@ dory = Animal.new('Dory', :female)
 
 nemo.greet
 p nemo.specie
-#p nemo.address
+p nemo.address
 p nemo.swim
+p nemo.respond_to? :swim
 
 nemo_fish = Fish.new('Nemo Fish', :male)
 dory_fish = Fish.new('Dory Fish', :female)
 
 nemo_fish.greet
 p nemo_fish.specie
-#p nemo_fish.address
+p nemo_fish.address
 p nemo_fish.swim
